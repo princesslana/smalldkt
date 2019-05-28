@@ -3,7 +3,6 @@ package com.github.princesslana.smalldkt.type.user
 import com.github.princesslana.smalldkt.Snowflake
 import kotlinx.serialization.*
 import kotlinx.serialization.internal.StringDescriptor
-import java.lang.IllegalStateException
 
 @Serializable
 data class User(
@@ -21,7 +20,7 @@ data class User(
 )
 
 enum class Flag(shift: Int, val value: Int = 1 shl shift) {
-    NONE(0),
+    NONE(0, 0),
     DISCORD_EMPLOYEE(0),
     DISCORD_PARTNER(1),
     HYPESQUAD_EVENTS(2),
@@ -41,7 +40,18 @@ enum class Flag(shift: Int, val value: Int = 1 shl shift) {
         override val descriptor: SerialDescriptor = StringDescriptor.withName("FlagsSerializer")
 
         override fun deserialize(decoder: Decoder): Flag {
-            return typeMap[decoder.decodeInt()]!!
+            return when (decoder.decodeInt()) {
+                0 -> NONE
+                1 shl 0 -> DISCORD_EMPLOYEE
+                1 shl 1 -> DISCORD_PARTNER
+                1 shl 2 -> HYPESQUAD_EVENTS
+                1 shl 3 -> BUG_HUNTER
+                1 shl 6 -> HOUSE_BRAVERY
+                1 shl 7 -> HOUSE_BRILLIANCE
+                1 shl 8 -> HOUSE_BALANCE
+                1 shl 9 -> EARLY_SUPPORTER
+                else -> throw IllegalStateException("Illegal Flag Type.")
+            }
         }
 
         override fun serialize(encoder: Encoder, obj: Flag) {
