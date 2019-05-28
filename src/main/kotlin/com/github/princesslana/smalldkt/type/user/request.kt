@@ -3,8 +3,10 @@ package com.github.princesslana.smalldkt.type.user
 import com.github.princesslana.smalldkt.*
 import com.github.princesslana.smalldkt.get
 import com.github.princesslana.smalldkt.patch
+import com.github.princesslana.smalldkt.type.channel.Channel
 import com.github.princesslana.smalldkt.type.guild.PartialGuild
 import kotlinx.serialization.ImplicitReflectionSerializer
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 // Get Current User
@@ -38,11 +40,55 @@ suspend fun modifyCurrentUser(smallDData: SmallDData, payload: ModifyCurrentUser
 @UseExperimental(ImplicitReflectionSerializer::class)
 suspend fun getCurrentUserGuilds(
     smallDData: SmallDData,
-    before: Optional<Snowflake> = Optional.absent(),
-    after: Optional<Snowflake> = Optional.absent(),
-    limit: Optional<Int> = Optional.absent()
+    before: Snowflake? = null,
+    after: Snowflake? = null,
+    limit: Int? = null
 ): List<PartialGuild> = get(smallDData, "/users/@me/guilds/" + queryString {
-    before.ifPresent { +("before" to "${it.value}") }
-    after.ifPresent { +("after" to "${it.value}") }
-    limit.ifPresent { +("limit" to "$it") }
+    if (before != null) {
+        +("before" to "$before")
+    }
+    if (after != null) {
+        +("after" to "$after")
+    }
+    if (limit != null) {
+        +("limit" to "$limit")
+    }
 })
+
+// Leave Guild
+// https://discordapp.com/developers/docs/resources/user#leave-guild
+
+fun leaveGuild(smallDData: SmallDData, guildId: Snowflake) =
+    delete(smallDData, "/users/@me/guilds/${guildId.value}")
+
+// Get User DMs
+// https://discordapp.com/developers/docs/resources/user#get-user-dms
+
+@UseExperimental(ImplicitReflectionSerializer::class)
+suspend fun getUserDMs(smallDData: SmallDData): List<Channel> = get(smallDData, "/users/@me/channels")
+
+// Create DM
+// https://discordapp.com/developers/docs/resources/user#create-dm
+
+@Serializable
+data class CreateDMPayload(@SerialName("recipient_id") val recipientId: Snowflake)
+
+@UseExperimental(ImplicitReflectionSerializer::class)
+suspend fun createDM(smallDData: SmallDData, payload: CreateDMPayload): Channel =
+    post(smallDData, payload, "/users/@me/channels")
+
+// Create Group DM
+// https://discordapp.com/developers/docs/resources/user#create-group-dm
+
+@Serializable
+data class CreateGroupDMPayload(@SerialName("access_tokens") val accessTokens: List<String>, val nicks: Map<Snowflake, String>)
+
+@UseExperimental(ImplicitReflectionSerializer::class)
+suspend fun createGroupDM(smallDData: SmallDData, payload: CreateGroupDMPayload): Channel =
+    post(smallDData, payload, "/users/@me/channels")
+
+// Get User Connections
+// https://discordapp.com/developers/docs/resources/user#get-user-connections
+
+@UseExperimental(ImplicitReflectionSerializer::class)
+suspend fun getUserConnections(smallDData: SmallDData): List<Connection> = get(smallDData, "/users/@me/connections")
