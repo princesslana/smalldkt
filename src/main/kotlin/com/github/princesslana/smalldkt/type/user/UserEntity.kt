@@ -24,6 +24,7 @@ data class User(
 @Serializable(with = WrapperSerializer::class)
 class AvatarData(string: String) : Wrapper<String>(string)
 
+@Serializable
 enum class Flag(shift: Int, val value: Int = 1 shl shift) {
     NONE(0, 0),
     DISCORD_EMPLOYEE(0),
@@ -35,6 +36,7 @@ enum class Flag(shift: Int, val value: Int = 1 shl shift) {
     HOUSE_BALANCE(8),
     EARLY_SUPPORTER(9);
 
+    @Serializer(forClass = Flag::class)
     companion object : KSerializer<Flag> {
         private val typeMap: MutableMap<Int, Flag> = mutableMapOf()
 
@@ -66,10 +68,12 @@ enum class Flag(shift: Int, val value: Int = 1 shl shift) {
     }
 }
 
+@Serializable
 enum class PremiumType(val value: Int) {
     NITRO_CLASSIC(1),
     NITRO(2);
 
+    @Serializer(forClass = PremiumType::class)
     companion object : KSerializer<PremiumType> {
         override val descriptor: SerialDescriptor = StringDescriptor.withName("PremiumTypeSerializer")
 
