@@ -1,25 +1,24 @@
+@file:Suppress("unused")
+
 package com.github.princesslana.smalldkt.type.user
 
 import com.github.princesslana.smalldkt.*
-import com.github.princesslana.smalldkt.get
-import com.github.princesslana.smalldkt.patch
 import com.github.princesslana.smalldkt.type.channel.Channel
 import com.github.princesslana.smalldkt.type.guild.PartialGuild
-import kotlinx.serialization.ImplicitReflectionSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.internal.ArrayListSerializer
 
 // Get Current User
 // https://discordapp.com/developers/docs/resources/user#get-current-user
 
-@UseExperimental(ImplicitReflectionSerializer::class)
-suspend fun getCurrentUser(smallDData: SmallDData): User = get(smallDData, "/users/@me")
+suspend fun getCurrentUser(smallDData: SmallDData): User = get(smallDData, "/users/@me", User.serializer())
 
 // Get User
 // https://discordapp.com/developers/docs/resources/user#get-user
 
-@UseExperimental(ImplicitReflectionSerializer::class)
-suspend fun getUser(smallDData: SmallDData, userId: Snowflake): User = get(smallDData, "/users/${userId.value}")
+suspend fun getUser(smallDData: SmallDData, userId: Snowflake): User =
+    get(smallDData, "/users/${userId.value}", User.serializer())
 
 // Modify Current User
 // https://discordapp.com/developers/docs/resources/user#modify-current-user
@@ -30,14 +29,12 @@ data class ModifyCurrentUserPayload(
     val avatar: AvatarData
 )
 
-@UseExperimental(ImplicitReflectionSerializer::class)
 suspend fun modifyCurrentUser(smallDData: SmallDData, payload: ModifyCurrentUserPayload): User =
-    patch(smallDData, payload, "/users/@me")
+    patch(smallDData, payload, ModifyCurrentUserPayload.serializer(), "/users/@me", User.serializer())
 
 // Get Current User Guilds
 // https://discordapp.com/developers/docs/resources/user#get-current-user-guilds
 
-@UseExperimental(ImplicitReflectionSerializer::class)
 suspend fun getCurrentUserGuilds(
     smallDData: SmallDData,
     before: Snowflake? = null,
@@ -53,7 +50,7 @@ suspend fun getCurrentUserGuilds(
     if (limit != null) {
         +("limit" to "$limit")
     }
-})
+}, ArrayListSerializer(PartialGuild.serializer()))
 
 // Leave Guild
 // https://discordapp.com/developers/docs/resources/user#leave-guild
@@ -64,8 +61,8 @@ fun leaveGuild(smallDData: SmallDData, guildId: Snowflake) =
 // Get User DMs
 // https://discordapp.com/developers/docs/resources/user#get-user-dms
 
-@UseExperimental(ImplicitReflectionSerializer::class)
-suspend fun getUserDMs(smallDData: SmallDData): List<Channel> = get(smallDData, "/users/@me/channels")
+suspend fun getUserDMs(smallDData: SmallDData): List<Channel> =
+    get(smallDData, "/users/@me/channels", ArrayListSerializer(Channel.serializer()))
 
 // Create DM
 // https://discordapp.com/developers/docs/resources/user#create-dm
@@ -73,9 +70,8 @@ suspend fun getUserDMs(smallDData: SmallDData): List<Channel> = get(smallDData, 
 @Serializable
 data class CreateDMPayload(@SerialName("recipient_id") val recipientId: Snowflake)
 
-@UseExperimental(ImplicitReflectionSerializer::class)
 suspend fun createDM(smallDData: SmallDData, payload: CreateDMPayload): Channel =
-    post(smallDData, payload, "/users/@me/channels")
+    post(smallDData, payload, CreateDMPayload.serializer(), "/users/@me/channels", Channel.serializer())
 
 // Create Group DM
 // https://discordapp.com/developers/docs/resources/user#create-group-dm
@@ -83,12 +79,11 @@ suspend fun createDM(smallDData: SmallDData, payload: CreateDMPayload): Channel 
 @Serializable
 data class CreateGroupDMPayload(@SerialName("access_tokens") val accessTokens: List<String>, val nicks: Map<Snowflake, String>)
 
-@UseExperimental(ImplicitReflectionSerializer::class)
 suspend fun createGroupDM(smallDData: SmallDData, payload: CreateGroupDMPayload): Channel =
-    post(smallDData, payload, "/users/@me/channels")
+    post(smallDData, payload, CreateGroupDMPayload.serializer(), "/users/@me/channels", Channel.serializer())
 
 // Get User Connections
 // https://discordapp.com/developers/docs/resources/user#get-user-connections
 
-@UseExperimental(ImplicitReflectionSerializer::class)
-suspend fun getUserConnections(smallDData: SmallDData): List<Connection> = get(smallDData, "/users/@me/connections")
+suspend fun getUserConnections(smallDData: SmallDData): List<Connection> =
+    get(smallDData, "/users/@me/connections", ArrayListSerializer(Connection.serializer()))

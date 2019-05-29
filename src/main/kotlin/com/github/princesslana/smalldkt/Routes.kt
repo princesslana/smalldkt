@@ -3,44 +3,59 @@ package com.github.princesslana.smalldkt
 import com.github.princesslana.smalld.Attachment
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlinx.serialization.ImplicitReflectionSerializer
-import kotlinx.serialization.parse
-import kotlinx.serialization.stringify
+import kotlinx.serialization.KSerializer
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-@ImplicitReflectionSerializer
-internal suspend inline fun <reified V : Any> get(smallD: SmallDData, path: String): V =
+internal suspend fun <V> get(smallD: SmallDData, path: String, resultSerializer: KSerializer<V>): V =
     suspendCoroutine { continuation ->
-        continuation.resume(JSON.parse(smallD.smallD.get(path)))
+        continuation.resume(JSON.parse(resultSerializer, smallD.smallD.get(path)))
     }
 
-@ImplicitReflectionSerializer
-internal suspend inline fun <reified K : Any, reified V : Any> post(
+internal suspend fun <K, V> post(
     smallD: SmallDData,
     payload: K,
+    payloadSerializer: KSerializer<K>,
     path: String,
+    resultSerializer: KSerializer<V>,
     vararg attachments: Attachment
 ): V = suspendCoroutine { continuation ->
-    continuation.resume(JSON.parse(smallD.smallD.post(path, JSON.stringify(payload), *attachments)))
+    continuation.resume(
+        JSON.parse(
+            resultSerializer,
+            smallD.smallD.post(path, JSON.stringify(payloadSerializer, payload), *attachments)
+        )
+    )
 }
 
-@ImplicitReflectionSerializer
-internal suspend inline fun <reified K : Any, reified V : Any> put(
+internal suspend inline fun <K, V> put(
     smallD: SmallDData,
     payload: K,
-    path: String
+    payloadSerializer: KSerializer<K>,
+    path: String,
+    resultSerializer: KSerializer<V>
 ): V = suspendCoroutine { continuation ->
-    continuation.resume(JSON.parse(smallD.smallD.put(path, JSON.stringify(payload))))
+    continuation.resume(
+        JSON.parse(
+            resultSerializer,
+            smallD.smallD.put(path, JSON.stringify(payloadSerializer, payload))
+        )
+    )
 }
 
-@ImplicitReflectionSerializer
-internal suspend inline fun <reified K : Any, reified V : Any> patch(
+internal suspend inline fun <K, V> patch(
     smallD: SmallDData,
     payload: K,
-    path: String
+    payloadSerializer: KSerializer<K>,
+    path: String,
+    resultSerializer: KSerializer<V>
 ): V = suspendCoroutine { continuation ->
-    continuation.resume(JSON.parse(smallD.smallD.patch(path, JSON.stringify(payload))))
+    continuation.resume(
+        JSON.parse(
+            resultSerializer,
+            smallD.smallD.patch(path, JSON.stringify(payloadSerializer, payload))
+        )
+    )
 }
 
 internal fun delete(smallD: SmallDData, path: String) {
