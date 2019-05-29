@@ -18,10 +18,12 @@ data class Connection(
     val visibility: VisibilityType
 )
 
+@Serializable
 enum class VisibilityType(val value: Int) {
     NONE(0),
     EVERYONE(1);
 
+    @Serializer(forClass = VisibilityType::class)
     companion object : KSerializer<VisibilityType> {
         override val descriptor: SerialDescriptor = StringDescriptor.withName("VisibilityTypeSerializer")
 

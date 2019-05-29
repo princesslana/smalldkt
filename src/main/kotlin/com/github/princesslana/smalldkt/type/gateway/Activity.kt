@@ -22,11 +22,13 @@ data class Activity(
     val flags: Int? = null
 )
 
+@Serializable
 enum class ActivityType(val value: Int) {
     GAME(0),
     STREAMING(1),
     LISTENING(2);
 
+    @Serializer(forClass = ActivityType::class)
     companion object : KSerializer<ActivityType> {
         override val descriptor: SerialDescriptor = StringDescriptor.withName("ActivityTypeSerializer")
 
@@ -51,7 +53,9 @@ data class ActivityTimestamps(val start: Int? = null, val end: Int? = null)
 @Serializable
 data class ActivityParty(val id: String? = null, val size: ActivityPartySize)
 
+@Serializable
 data class ActivityPartySize(val currentSize: Int, val maxSize: Int) {
+    @Serializer(forClass = ActivityPartySize::class)
     companion object : KSerializer<ActivityPartySize> {
         val serializer = ArrayListSerializer(Int.serializer())
         override val descriptor: SerialDescriptor = StringDescriptor.withName("ActivityPartySizeSerializer")

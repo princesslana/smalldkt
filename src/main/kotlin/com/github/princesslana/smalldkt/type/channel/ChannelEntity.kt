@@ -29,6 +29,7 @@ data class Channel(
     @SerialName("last_pin_timestamp") val lastPinTimestamp: TimeStamp? = null
 )
 
+@Serializable
 enum class ChannelType(val value: Int) {
     GUILD_TEXT(0),
     DM(1),
@@ -38,6 +39,7 @@ enum class ChannelType(val value: Int) {
     GUILD_NEWS(5),
     GUILD_STORE(6);
 
+    @Serializer(forClass = ChannelType::class)
     companion object : KSerializer<ChannelType> {
         override val descriptor: SerialDescriptor = StringDescriptor.withName("ChannelTypeSerializer")
 

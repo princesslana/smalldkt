@@ -1,9 +1,6 @@
 package com.github.princesslana.smalldkt.type.user
 
-import com.github.princesslana.smalldkt.Snowflake
-import com.github.princesslana.smalldkt.TimeStamp
-import com.github.princesslana.smalldkt.Wrapper
-import com.github.princesslana.smalldkt.WrapperSerializer
+import com.github.princesslana.smalldkt.*
 import com.github.princesslana.smalldkt.type.gateway.Activity
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -15,7 +12,7 @@ data class TypingStartEvent(
     @SerialName("guild_id") val guildId: Snowflake? = null,
     @SerialName("user_id") val userId: Snowflake,
     val timestamp: TimeStamp
-)
+) : Event
 
 // https://discordapp.com/developers/docs/topics/gateway#presence-update
 @Serializable
@@ -34,8 +31,8 @@ data class PresenceUpdateEvent(
     val status: String,
     val activities: List<Activity>,
     @SerialName("client_status") val clientStatus: ClientStatus
-)
+) : Event
 
 // https://discordapp.com/developers/docs/topics/gateway#user-update
 @Serializable(with = WrapperSerializer::class)
-class UserUpdateEvent(user: User) : Wrapper<User>(user)
+class UserUpdateEvent(user: User) : Wrapper<User>(user), Event
