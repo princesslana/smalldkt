@@ -1,6 +1,8 @@
 package com.github.princesslana.smalldkt.type.user
 
 import com.github.princesslana.smalldkt.Snowflake
+import com.github.princesslana.smalldkt.Wrapper
+import com.github.princesslana.smalldkt.WrapperSerializer
 import kotlinx.serialization.*
 import kotlinx.serialization.internal.StringDescriptor
 
@@ -18,6 +20,9 @@ data class User(
     val flags: Flag? = null,
     @SerialName("premium_type") val premiumType: PremiumType? = null
 )
+
+@Serializable(with = WrapperSerializer::class)
+class AvatarData(string: String) : Wrapper<String>(string)
 
 enum class Flag(shift: Int, val value: Int = 1 shl shift) {
     NONE(0, 0),
