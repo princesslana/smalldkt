@@ -12,13 +12,13 @@ import kotlinx.serialization.internal.ArrayListSerializer
 // Get Current User
 // https://discordapp.com/developers/docs/resources/user#get-current-user
 
-suspend fun getCurrentUser(smallDData: SmallDData): User = get(smallDData, "/users/@me", User.serializer())
+suspend fun SmallDData<*>.getCurrentUser() = smallD.get("/users/@me", User.serializer())
 
 // Get User
 // https://discordapp.com/developers/docs/resources/user#get-user
 
-suspend fun getUser(smallDData: SmallDData, userId: Snowflake): User =
-    get(smallDData, "/users/${userId.value}", User.serializer())
+suspend fun SmallDData<*>.getUser(userId: Snowflake) =
+    smallD.get("/users/$userId", User.serializer())
 
 // Modify Current User
 // https://discordapp.com/developers/docs/resources/user#modify-current-user
@@ -29,18 +29,17 @@ data class ModifyCurrentUserPayload(
     val avatar: AvatarData
 )
 
-suspend fun modifyCurrentUser(smallDData: SmallDData, payload: ModifyCurrentUserPayload): User =
-    patch(smallDData, payload, ModifyCurrentUserPayload.serializer(), "/users/@me", User.serializer())
+suspend fun SmallDData<*>.modifyCurrentUser(payload: ModifyCurrentUserPayload) =
+    smallD.patch(payload, ModifyCurrentUserPayload.serializer(), "/users/@me", User.serializer())
 
 // Get Current User Guilds
 // https://discordapp.com/developers/docs/resources/user#get-current-user-guilds
 
-suspend fun getCurrentUserGuilds(
-    smallDData: SmallDData,
+suspend fun SmallDData<*>.getCurrentUserGuilds(
     before: Snowflake? = null,
     after: Snowflake? = null,
     limit: Int? = null
-): List<PartialGuild> = get(smallDData, "/users/@me/guilds/" + queryString {
+) = smallD.get("/users/@me/guilds/" + queryString {
     if (before != null) {
         +("before" to "$before")
     }
@@ -55,14 +54,14 @@ suspend fun getCurrentUserGuilds(
 // Leave Guild
 // https://discordapp.com/developers/docs/resources/user#leave-guild
 
-fun leaveGuild(smallDData: SmallDData, guildId: Snowflake) =
-    delete(smallDData, "/users/@me/guilds/${guildId.value}")
+fun SmallDData<*>.leaveGuild(guildId: Snowflake) =
+    smallD.delete("/users/@me/guilds/$guildId")
 
 // Get User DMs
 // https://discordapp.com/developers/docs/resources/user#get-user-dms
 
-suspend fun getUserDMs(smallDData: SmallDData): List<Channel> =
-    get(smallDData, "/users/@me/channels", ArrayListSerializer(Channel.serializer()))
+suspend fun SmallDData<*>.getUserDMs() =
+    smallD.get("/users/@me/channels", ArrayListSerializer(Channel.serializer()))
 
 // Create DM
 // https://discordapp.com/developers/docs/resources/user#create-dm
@@ -70,8 +69,8 @@ suspend fun getUserDMs(smallDData: SmallDData): List<Channel> =
 @Serializable
 data class CreateDMPayload(@SerialName("recipient_id") val recipientId: Snowflake)
 
-suspend fun createDM(smallDData: SmallDData, payload: CreateDMPayload): Channel =
-    post(smallDData, payload, CreateDMPayload.serializer(), "/users/@me/channels", Channel.serializer())
+suspend fun SmallDData<*>.createDM(payload: CreateDMPayload) =
+    smallD.post(payload, CreateDMPayload.serializer(), "/users/@me/channels", Channel.serializer())
 
 // Create Group DM
 // https://discordapp.com/developers/docs/resources/user#create-group-dm
@@ -79,11 +78,11 @@ suspend fun createDM(smallDData: SmallDData, payload: CreateDMPayload): Channel 
 @Serializable
 data class CreateGroupDMPayload(@SerialName("access_tokens") val accessTokens: List<String>, val nicks: Map<Snowflake, String>)
 
-suspend fun createGroupDM(smallDData: SmallDData, payload: CreateGroupDMPayload): Channel =
-    post(smallDData, payload, CreateGroupDMPayload.serializer(), "/users/@me/channels", Channel.serializer())
+suspend fun SmallDData<*>.createGroupDM(payload: CreateGroupDMPayload) =
+    smallD.post(payload, CreateGroupDMPayload.serializer(), "/users/@me/channels", Channel.serializer())
 
 // Get User Connections
 // https://discordapp.com/developers/docs/resources/user#get-user-connections
 
-suspend fun getUserConnections(smallDData: SmallDData): List<Connection> =
-    get(smallDData, "/users/@me/connections", ArrayListSerializer(Connection.serializer()))
+suspend fun SmallDData<*>.getUserConnections() =
+    smallD.get("/users/@me/connections", ArrayListSerializer(Connection.serializer()))

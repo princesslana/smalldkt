@@ -1,8 +1,7 @@
 package com.github.princesslana.smalldkt.type.user
 
+import com.github.princesslana.smalldkt.Optional
 import com.github.princesslana.smalldkt.Snowflake
-import com.github.princesslana.smalldkt.Wrapper
-import com.github.princesslana.smalldkt.WrapperSerializer
 import kotlinx.serialization.*
 import kotlinx.serialization.internal.StringDescriptor
 
@@ -12,17 +11,49 @@ data class User(
     val username: String,
     val discriminator: String,
     val avatar: String?,
-    val bot: String? = null,
+    val bot: Boolean? = null,
     @SerialName("mfa_enabled") val mfaEnabled: Boolean? = null,
     val locale: String? = null,
     val verified: String? = null,
     val email: String? = null,
     val flags: Flag? = null,
     @SerialName("premium_type") val premiumType: PremiumType? = null
-)
+) {
+    fun isBot() = bot == true
+}
 
-@Serializable(with = WrapperSerializer::class)
-class AvatarData(string: String) : Wrapper<String>(string)
+@Serializable
+data class PresenceUser(
+    val id: Snowflake,
+    val username: String? = null,
+    val discriminator: String? = null,
+    val avatar: Optional<String>? = Optional.absent(),
+    val bot: Boolean? = null,
+    @SerialName("mfa_enabled") val mfaEnabled: Boolean? = null,
+    val locale: String? = null,
+    val verified: String? = null,
+    val email: String? = null,
+    val flags: Flag? = null,
+    @SerialName("premium_type") val premiumType: PremiumType? = null
+) {
+    fun isBot() = bot == true
+}
+
+@Serializable
+class AvatarData(val string: String) {
+    @Serializer(forClass = AvatarData::class)
+    companion object : KSerializer<AvatarData> {
+        override val descriptor: SerialDescriptor = StringDescriptor.withName("AvatarDataSerializer")
+
+        override fun deserialize(decoder: Decoder): AvatarData {
+            return AvatarData(decoder.decodeString())
+        }
+
+        override fun serialize(encoder: Encoder, obj: AvatarData) {
+            encoder.encodeString(obj.string)
+        }
+    }
+}
 
 @Serializable
 enum class Flag(shift: Int, val value: Int = 1 shl shift) {
