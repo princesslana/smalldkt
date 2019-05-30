@@ -5,6 +5,8 @@ package com.github.princesslana.smalldkt
 import com.github.princesslana.smalld.Config
 import com.github.princesslana.smalld.SmallD
 import com.github.princesslana.smalldkt.type.user.PresenceUpdateEvent
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.flow.*
@@ -36,13 +38,16 @@ suspend inline fun <reified T> Flow<Event>.collectEvent(noinline eventConsumer: 
 class Bot(config: Config, flowContracts: List<suspend (SmallDData, Flow<Event>) -> Unit>) {
     val smallDData: SmallDData
     private val channel: BroadcastChannel<Event> = BroadcastChannel(DEFAULT_CHANNEL_BUFFER)
+    private val emitterScope = CoroutineScope(Dispatchers.Default)
 
     init {
+        GlobalScope
+        val contractScope = CoroutineScope(Dispatchers.Default)
         val smallD = SmallD.create(config)
         smallDData = SmallDData((smallD))
         smallD.use {
             flowContracts.forEach {
-                GlobalScope.launch {
+                contractScope.launch {
                     it(smallDData, channel.asFlow())
                 }
             }
@@ -67,7 +72,7 @@ class Bot(config: Config, flowContracts: List<suspend (SmallDData, Flow<Event>) 
         }
     }
 
-    private fun emitEvent(event: Event) = GlobalScope.launch {
+    private fun emitEvent(event: Event) = emitterScope.launch {
         channel.send(event)
     }
 }
