@@ -1,19 +1,19 @@
 package com.github.princesslana.smalldkt
 
 import com.github.princesslana.smalld.Attachment
+import com.github.princesslana.smalld.SmallD
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.serialization.KSerializer
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-internal suspend fun <V> get(smallD: SmallDData, path: String, resultSerializer: KSerializer<V>): V =
+internal suspend fun <V> SmallD.get(path: String, resultSerializer: KSerializer<V>): V =
     suspendCoroutine { continuation ->
-        continuation.resume(JSON.parse(resultSerializer, smallD.smallD.get(path)))
+        continuation.resume(JSON.parse(resultSerializer, get(path)))
     }
 
-internal suspend fun <K, V> post(
-    smallD: SmallDData,
+internal suspend fun <K, V> SmallD.post(
     payload: K,
     payloadSerializer: KSerializer<K>,
     path: String,
@@ -23,13 +23,12 @@ internal suspend fun <K, V> post(
     continuation.resume(
         JSON.parse(
             resultSerializer,
-            smallD.smallD.post(path, JSON.stringify(payloadSerializer, payload), *attachments)
+            post(path, JSON.stringify(payloadSerializer, payload), *attachments)
         )
     )
 }
 
-internal suspend inline fun <K, V> put(
-    smallD: SmallDData,
+internal suspend inline fun <K, V> SmallD.put(
     payload: K,
     payloadSerializer: KSerializer<K>,
     path: String,
@@ -38,13 +37,12 @@ internal suspend inline fun <K, V> put(
     continuation.resume(
         JSON.parse(
             resultSerializer,
-            smallD.smallD.put(path, JSON.stringify(payloadSerializer, payload))
+            put(path, JSON.stringify(payloadSerializer, payload))
         )
     )
 }
 
-internal suspend inline fun <K, V> patch(
-    smallD: SmallDData,
+internal suspend inline fun <K, V> SmallD.patch(
     payload: K,
     payloadSerializer: KSerializer<K>,
     path: String,
@@ -53,11 +51,11 @@ internal suspend inline fun <K, V> patch(
     continuation.resume(
         JSON.parse(
             resultSerializer,
-            smallD.smallD.patch(path, JSON.stringify(payloadSerializer, payload))
+            patch(path, JSON.stringify(payloadSerializer, payload))
         )
     )
 }
-
-internal fun delete(smallD: SmallDData, path: String) {
-    GlobalScope.launch { smallD.smallD.delete(path) }
+// TODO
+internal fun SmallD.delete(path: String) {
+    GlobalScope.launch { delete(path) }
 }

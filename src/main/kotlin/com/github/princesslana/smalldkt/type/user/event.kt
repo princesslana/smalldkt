@@ -24,15 +24,29 @@ data class ClientStatus(
 
 @Serializable
 data class PresenceUpdateEvent(
-    val user: User,
-    val roles: List<Snowflake>,
-    val game: Activity?,
-    @SerialName("guild_id") val guildId: Snowflake,
-    val status: String,
-    val activities: List<Activity>,
-    @SerialName("client_status") val clientStatus: ClientStatus
+    val user: PresenceUser? = null,
+    val roles: List<Snowflake>? = null,
+    val game: Optional<Activity>? = Optional.absent(),
+    @SerialName("guild_id") val guildId: Snowflake? = null,
+    val status: String? = null,
+    val activities: List<Activity>? = null,
+    @SerialName("client_status") val clientStatus: ClientStatus? = null
 ) : Event
 
 // https://discordapp.com/developers/docs/topics/gateway#user-update
-@Serializable(with = WrapperSerializer::class)
-class UserUpdateEvent(user: User) : Wrapper<User>(user), Event
+@Serializable
+class UserUpdateEvent(
+    val id: Snowflake,
+    val username: String,
+    val discriminator: String,
+    val avatar: String?,
+    val bot: Boolean? = null,
+    @SerialName("mfa_enabled") val mfaEnabled: Boolean? = null,
+    val locale: String? = null,
+    val verified: String? = null,
+    val email: String? = null,
+    val flags: Flag? = null,
+    @SerialName("premium_type") val premiumType: PremiumType? = null
+) : Event {
+    fun isBot() = bot == true
+}
