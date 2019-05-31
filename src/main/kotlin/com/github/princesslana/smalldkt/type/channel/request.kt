@@ -17,5 +17,5 @@ suspend fun SmallDData<*>.getChannel(channelId: Snowflake) =
 // Delete Channel // TODO unfinished
 // https://discordapp.com/developers/docs/resources/channel#deleteclose-channel
 
-fun SmallDData<*>.deleteChannel(channelId: Snowflake) =
-    smallD.delete("/channels/$channelId")
+suspend fun SmallDData<*>.deleteChannel(channelId: Snowflake) =
+    smallD.delete("/channels/$channelId", Channel.serializer())

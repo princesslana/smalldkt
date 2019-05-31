@@ -14,7 +14,6 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.JsonObject
-import java.lang.Exception
 
 data class BotBuilder(
     val configBuilder: Config.Builder,
@@ -65,9 +64,6 @@ class Bot(config: Config, flowContracts: List<suspend (Flow<SmallDData<Event>>) 
                     val event = JSON.fromJson(serializer, element.getObject("d"))
                     emitEvent(event)
                 }
-            }
-            smallD.onClose {
-                channel.close()
             }
             it.run()
         }

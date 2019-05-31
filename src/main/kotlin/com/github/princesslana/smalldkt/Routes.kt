@@ -2,16 +2,21 @@ package com.github.princesslana.smalldkt
 
 import com.github.princesslana.smalld.Attachment
 import com.github.princesslana.smalld.SmallD
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.serialization.KSerializer
+import kotlinx.serialization.internal.UnitSerializer
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
+
+private val ioCoroutineScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
 
 internal suspend fun <V> SmallD.get(path: String, resultSerializer: KSerializer<V>): V =
     suspendCoroutine { continuation ->
         continuation.resume(JSON.parse(resultSerializer, get(path)))
     }
+
 
 internal suspend fun <K, V> SmallD.post(
     payload: K,
@@ -19,13 +24,20 @@ internal suspend fun <K, V> SmallD.post(
     path: String,
     resultSerializer: KSerializer<V>,
     vararg attachments: Attachment
-): V = suspendCoroutine { continuation ->
-    continuation.resume(
-        JSON.parse(
-            resultSerializer,
-            post(path, JSON.stringify(payloadSerializer, payload), *attachments)
+): V = when (resultSerializer) {
+    UnitSerializer -> {
+        ioCoroutineScope.launch { post(path, compile(payloadSerializer, payload), *attachments) }
+        @Suppress("UNCHECKED_CAST") // we already checked due to the when statement limiting it.
+        Unit as V
+    }
+    else -> suspendCoroutine { continuation ->
+        continuation.resume(
+            JSON.parse(
+                resultSerializer,
+                post(path, compile(payloadSerializer, payload), *attachments)
+            )
         )
-    )
+    }
 }
 
 internal suspend inline fun <K, V> SmallD.put(
@@ -33,13 +45,20 @@ internal suspend inline fun <K, V> SmallD.put(
     payloadSerializer: KSerializer<K>,
     path: String,
     resultSerializer: KSerializer<V>
-): V = suspendCoroutine { continuation ->
-    continuation.resume(
-        JSON.parse(
-            resultSerializer,
-            put(path, JSON.stringify(payloadSerializer, payload))
+): V = when (resultSerializer) {
+    UnitSerializer -> {
+        ioCoroutineScope.launch { put(path, compile(payloadSerializer, payload)) }
+        @Suppress("UNCHECKED_CAST") // we already checked due to the when statement limiting it.
+        Unit as V
+    }
+    else -> suspendCoroutine { continuation ->
+        continuation.resume(
+            JSON.parse(
+                resultSerializer,
+                put(path, compile(payloadSerializer, payload))
+            )
         )
-    )
+    }
 }
 
 internal suspend inline fun <K, V> SmallD.patch(
@@ -47,15 +66,39 @@ internal suspend inline fun <K, V> SmallD.patch(
     payloadSerializer: KSerializer<K>,
     path: String,
     resultSerializer: KSerializer<V>
-): V = suspendCoroutine { continuation ->
-    continuation.resume(
-        JSON.parse(
-            resultSerializer,
-            patch(path, JSON.stringify(payloadSerializer, payload))
+): V = when (resultSerializer) {
+    UnitSerializer -> {
+        ioCoroutineScope.launch { patch(path, compile(payloadSerializer, payload)) }
+        @Suppress("UNCHECKED_CAST") // we already checked due to the when statement limiting it.
+        Unit as V
+    }
+    else -> suspendCoroutine { continuation ->
+        continuation.resume(
+            JSON.parse(
+                resultSerializer,
+                patch(path, compile(payloadSerializer, payload))
+            )
         )
-    )
+    }
 }
-// TODO
-internal fun SmallD.delete(path: String) {
-    GlobalScope.launch { delete(path) }
+
+internal suspend fun <V> SmallD.delete(path: String, resultSerializer: KSerializer<V>): V = when (resultSerializer) {
+    UnitSerializer -> {
+        ioCoroutineScope.launch { delete(path) }
+        @Suppress("UNCHECKED_CAST") // we already checked due to the when statement limiting it.
+        Unit as V
+    }
+    else -> suspendCoroutine { continuation ->
+        continuation.resume(
+            JSON.parse(
+                resultSerializer,
+                delete(path)
+            )
+        )
+    }
+}
+
+private fun <T> compile(payloadSerializer: KSerializer<T>, payload: T): String = when (payloadSerializer) {
+    UnitSerializer -> "{}"
+    else -> JSON.stringify(payloadSerializer, payload)
 }
