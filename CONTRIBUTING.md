@@ -3,6 +3,8 @@
 If you'd like to report a bug please submit an [issue](https://github.com/princesslana/smalldkt/issues) and patiently wait for a response to the bug.
 ## Suggesting a Feature
 If you'd like to suggest a feature follow the same procedure as reporting a bug but use the proper template.
+<br />
+When suggesting a feature please let us know any possible implementations you have in mind, why it could be useful, and why it's worth while implementing.
 ## Implementing a Feature or Fixing an Issue
 If you're submitting code and implementing a feature or focusing on a specific issue then create a fork and submit a PR.
 Please be descriptive in what your PR is meant to accomplish and how it accomplishes its goal.
