@@ -4,8 +4,8 @@ package com.github.princesslana.smalldkt
 
 import com.github.princesslana.smalld.Config
 import com.github.princesslana.smalld.SmallD
-import com.github.princesslana.smalldkt.type.message.MessageCreateEvent
-import com.github.princesslana.smalldkt.type.user.PresenceUpdateEvent
+import com.github.princesslana.smalldkt.type.Event
+import com.github.princesslana.smalldkt.type.channel.events.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -13,7 +13,13 @@ import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.serialization.KSerializer
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonConfiguration
 import kotlinx.serialization.json.JsonObject
+import java.lang.Exception
+
+val JSON = Json(JsonConfiguration(encodeDefaults = false, strictMode = false))
+const val DEFAULT_CHANNEL_BUFFER = 25
 
 data class BotBuilder(
     val configBuilder: Config.Builder,
@@ -54,8 +60,17 @@ class Bot(config: Config, flowContracts: List<suspend (Flow<SmallDData<Event>>) 
                 val op = element.getPrimitive("op")
                 if (op.int == 0) {
                     val serializer: KSerializer<out Event> = when (val eventName = element.getPrimitive("t").content) {
+                        "CHANNEL_CREATE" -> ChannelCreateEvent.serializer()
+                        "CHANNEL_UPDATE" -> ChannelUpdateEvent.serializer()
+                        "CHANNEL_DELETE" -> ChannelDeleteEvent.serializer()
+                        "CHANNEL_PINS_UPDATE" -> ChannelPinsUpdateEvent.serializer()
                         "MESSAGE_CREATE" -> MessageCreateEvent.serializer()
-                        "PRESENCE_UPDATE" -> PresenceUpdateEvent.serializer()
+                        "MESSAGE_UPDATE" -> MessageUpdateEvent.serializer()
+                        "MESSAGE_DELETE" -> MessageDeleteEvent.serializer()
+                        "MESSAGE_DELETE_BULK" -> MessageDeleteBulkEvent.serializer()
+                        "MESSAGE_REACTION_ADD" -> MessageReactionAddEvent.serializer()
+                        "MESSAGE_REACTION_REMOVE" -> MessageReactionRemoveEvent.serializer()
+                        "MESSAGE_REACTION_REMOVE_ALL" -> MessageReactionRemoveAllEvent.serializer()
                         else -> {
                             println("Unhandled event name $eventName")
                             null
@@ -75,6 +90,8 @@ class Bot(config: Config, flowContracts: List<suspend (Flow<SmallDData<Event>>) 
         }
     }
 }
+
+data class SmallDData<T>(internal val smallD: SmallD, val event: T) where T : Any, T : Event
 
 fun bot(token: String, botConsumer: BotBuilder.() -> Unit): Bot {
     val config = Config.builder().setToken(token)

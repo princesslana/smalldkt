@@ -1,8 +1,8 @@
 package examples
 
 import com.github.princesslana.smalldkt.bot
-import com.github.princesslana.smalldkt.type.message.MessageCreateEvent
-import com.github.princesslana.smalldkt.type.message.respond
+import com.github.princesslana.smalldkt.type.channel.events.MessageCreateEvent
+import com.github.princesslana.smalldkt.type.channel.respond
 
 fun main() {
     bot("~~ TOKEN ~~") {
