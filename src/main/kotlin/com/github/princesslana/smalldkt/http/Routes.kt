@@ -15,9 +15,7 @@ private val ioCoroutineScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
 
 internal suspend fun <V> SmallD.get(path: String, resultSerializer: KSerializer<V>): V =
     suspendCoroutine { continuation ->
-        val jsonRes = get(path)
-        println(jsonRes)
-        continuation.resume(JSON.parse(resultSerializer, jsonRes))
+        continuation.resume(JSON.parse(resultSerializer, get(path)))
     }
 
 
@@ -97,12 +95,10 @@ internal suspend fun <V> SmallD.delete(path: String, resultSerializer: KSerializ
         Unit as V
     }
     else -> suspendCoroutine { continuation ->
-        val res = delete(path)
-        println(res)
         continuation.resume(
             JSON.parse(
                 resultSerializer,
-                res
+                delete(path)
             )
         )
     }
