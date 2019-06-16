@@ -7,15 +7,14 @@ import com.github.princesslana.smalldkt.http.delete
 import com.github.princesslana.smalldkt.type.invite.resources.InviteData
 
 suspend fun SmallDData<*>.getInvite(code: String,includeCount: Boolean) =
-smallD.get(
-  "/invites/$code?" + queryString{
-    +("with_counts" to "$includeCount")
-  },
-  InviteData.serializer()
-)
+        smallD.get("/invites/$code" + queryString{
+            +("with_counts" to "$includeCount")
+        },
+                InviteData.serializer()
+        )
 
 suspend fun SmallDData<*>.deleteInvite(code: String) =
-smallD.delete(
-  "/invites/$code",
-  InviteData.serializer()
-)
+        smallD.delete(
+                "/invites/$code",
+                InviteData.serializer()
+        )
