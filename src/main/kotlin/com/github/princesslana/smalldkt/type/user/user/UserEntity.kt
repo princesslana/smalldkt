@@ -1,9 +1,38 @@
 package com.github.princesslana.smalldkt.type.user.user
 
 import com.github.princesslana.smalldkt.type.Identifiable
+import com.github.princesslana.smalldkt.type.Optional
 import com.github.princesslana.smalldkt.type.Snowflake
 import kotlinx.serialization.*
 import kotlinx.serialization.internal.StringDescriptor
+
+interface PartialUser: Identifiable{
+    val username: String?
+    val discriminator: String?
+    val avatar: Optional<String>?
+    val bot: Boolean?
+    val mfa_enabled: Boolean?
+    val locale: String?
+    val verified: Boolean?
+    val email: String?
+    val flags: Int?
+    val premium_type: PremiumType?
+}
+
+@Serializable
+data class PartialUserImpl(
+        override val id: Snowflake,
+        override val username: String? = null,
+        override val discriminator: String? = null,
+        override val avatar: Optional<String>? = Optional.absent(),
+        override val bot: Boolean? = null,
+        override val mfa_enabled: Boolean? = null,
+        override val locale: String? = null,
+        override val verified: Boolean? = null,
+        override val email: String? = null,
+        override val flags: Int? = null,
+        override val premium_type: PremiumType? = null
+): PartialUser
 
 @Serializable(with = UserImpl.`$serializer`::class)
 interface User : Identifiable {

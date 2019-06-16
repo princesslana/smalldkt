@@ -10,23 +10,23 @@ import kotlinx.serialization.internal.StringDescriptor
 
 
 interface InviteMetadata{
-    val inviter: Optional<UserImpl>
-    val uses: Optional<Int>
-    val max_uses: Optional<Int>
-    val max_age: Optional<Int>
-    val temporary: Optional<Boolean>
-    val created_at: Optional<TimeStamp>
-    val revoked: Optional<Boolean>
+    val inviter: UserImpl?
+    val uses: Int?
+    val max_uses: Int?
+    val max_age: Int?
+    val temporary: Boolean?
+    val created_at: TimeStamp?
+    val revoked: Boolean?
 }
 
 interface Invite{
     val code: String
-    val guild: Optional<PartialGuildImpl>
+    val guild: PartialGuildImpl?
     val channel: ChannelImpl
-    val target_user: Optional<UserImpl>
-    val target_user_type: Optional<TargetUserType>
-    val approximate_presence_count: Optional<Int>
-    val approximate_member_count: Optional<Int>
+    val target_user: UserImpl?
+    val target_user_type: TargetUserType?
+    val approximate_presence_count: Int?
+    val approximate_member_count: Int?
 }
 
 @Serializable(with = TargetUserTypeSerializer::class)
@@ -51,17 +51,17 @@ class TargetUserTypeSerializer: KSerializer<TargetUserType>{
 @Serializable
 data class InviteImpl(
         override val code: String,
-        override val guild: Optional<PartialGuildImpl> = Optional.absent(),
+        override val guild: PartialGuildImpl? = null,
         override val channel: ChannelImpl,
-        override val target_user: Optional<UserImpl> = Optional.absent(),
-        override val target_user_type: Optional<TargetUserType> = Optional.absent(),
-        override val approximate_presence_count: Optional<Int> = Optional.absent(),
-        override val approximate_member_count: Optional<Int> = Optional.absent(),
-        override val inviter: Optional<UserImpl> = Optional.absent(),
-        override val uses: Optional<Int> = Optional.absent(),
-        override val max_uses: Optional<Int> = Optional.absent(),
-        override val max_age: Optional<Int> = Optional.absent(),
-        override val temporary: Optional<Boolean> = Optional.absent(),
-        override val created_at: Optional<TimeStamp> = Optional.absent(),
-        override val revoked: Optional<Boolean> = Optional.absent()
+        override val target_user: UserImpl? = null,
+        override val target_user_type: TargetUserType? = null,
+        override val approximate_presence_count: Int? = null,
+        override val approximate_member_count: Int? = null,
+        override val inviter: UserImpl? = null,
+        override val uses: Int? = null,
+        override val max_uses: Int? = null,
+        override val max_age: Int? = null,
+        override val temporary: Boolean? = null,
+        override val created_at: TimeStamp? = null,
+        override val revoked: Boolean? = null
 ): Invite,InviteMetadata
