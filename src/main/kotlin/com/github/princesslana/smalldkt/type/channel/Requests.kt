@@ -66,7 +66,7 @@ suspend fun SmallDData<*>.getChannelMessages(
     getChannelMessagesRequest: GetChannelMessagesRequest
 ): List<Channel> =
     smallD.get(
-        "/channels/$channelId/messages/${getChannelMessagesRequest.queryString}",
+        "/channels/$channelId/messages${getChannelMessagesRequest.queryString}",
         ArrayListSerializer(ChannelImpl.serializer())
     )
 
