@@ -11,7 +11,7 @@ interface GuildMemberFace {
     val nick: String? // optional
     val roles: List<Snowflake>
     val joined_at: TimeStamp
-    val premium_since: TimeStamp? // nullable
+    val premium_since: Optional<TimeStamp>? // nullable
     val deaf: Boolean
     val mute: Boolean
 }
@@ -22,7 +22,7 @@ data class GuildMember(
     override val nick: String? = null,
     override val roles: List<Snowflake>,
     override val joined_at: TimeStamp,
-    override val premium_since: TimeStamp?,
+    override val premium_since: Optional<TimeStamp>? = Optional.absent(),
     override val deaf: Boolean,
     override val mute: Boolean
 ) : GuildMemberFace
