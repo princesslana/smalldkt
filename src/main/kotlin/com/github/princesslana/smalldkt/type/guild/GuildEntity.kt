@@ -22,7 +22,7 @@ interface GuildFace {
     val embed_enabled: Boolean? // optional
     val embed_channel_id: Snowflake? // optional
     val verification_level: VerificationLevel
-    val default_messages_notifications: DefaultMessageNotificationLevel
+    val default_messages_notifications: DefaultMessageNotificationLevel? // optional?
     val explicit_content_filter: ExplicitContentFilterLevel
     val roles: List<Role>
     val emojis: List<Emoji>
@@ -32,8 +32,8 @@ interface GuildFace {
     val widget_enabled: Boolean? // optional
     val widget_channel_id: Snowflake? // optional
     val system_channel_id: Snowflake? // nullable
-    val max_presences: Int? // nullable
-    val max_members: Int
+    val max_presences: Optional<Int>? // nullable
+    val max_members: Int?
     val vanity_url_code: String? // nullable
     val description: String? // nullable
     val banner: String? // nullable
@@ -56,7 +56,7 @@ data class Guild(
     override val embed_enabled: Boolean? = null,
     override val embed_channel_id: Snowflake? = null,
     override val verification_level: VerificationLevel,
-    override val default_messages_notifications: DefaultMessageNotificationLevel,
+    override val default_messages_notifications: DefaultMessageNotificationLevel? = null,
     override val explicit_content_filter: ExplicitContentFilterLevel,
     override val roles: List<Role>,
     override val emojis: List<Emoji>,
@@ -66,8 +66,8 @@ data class Guild(
     override val widget_enabled: Boolean? = null,
     override val widget_channel_id: Snowflake? = null,
     override val system_channel_id: Snowflake?,
-    override val max_presences: Int?,
-    override val max_members: Int,
+    override val max_presences: Optional<Int>? = Optional.absent(),
+    override val max_members: Int? = null,
     override val vanity_url_code: String?,
     override val description: String?,
     override val banner: String?,

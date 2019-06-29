@@ -22,7 +22,7 @@ interface MessageFace {
     val mention_everyone: Boolean
     val mentions: List<PartialGuildUser>
     val mention_roles: List<Snowflake>
-    val attachments: List<Attachment>
+    val attachments: List<MessageAttachment>
     val embeds: List<Embed>
     val reactions: List<Reaction>? // optional
     val nonce: Optional<Snowflake>?
@@ -47,7 +47,7 @@ data class Message(
     override val mention_everyone: Boolean,
     override val mentions: List<PartialGuildUser>,
     override val mention_roles: List<Snowflake>,
-    override val attachments: List<Attachment>,
+    override val attachments: List<MessageAttachment>,
     override val embeds: List<Embed>,
     override val reactions: List<Reaction>? = null,
     override val nonce: Optional<Snowflake>? = Optional.absent(),
@@ -72,7 +72,7 @@ data class PartialMessage(
     val mention_everyone: Boolean? = null,
     val mentions: List<PartialGuildUser>? = null,
     val mention_roles: List<Snowflake>? = null,
-    val attachments: List<Attachment>? = null,
+    val attachments: List<MessageAttachment>? = null,
     val embeds: List<Embed>? = null,
     val reactions: List<Reaction>? = null,
     val nonce: Optional<Snowflake>? = Optional.absent(),

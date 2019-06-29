@@ -4,7 +4,7 @@ import com.github.princesslana.smalldkt.type.Snowflake
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Attachment(
+data class MessageAttachment(
     val id: Snowflake,
     val filename: String,
     val size: Int,

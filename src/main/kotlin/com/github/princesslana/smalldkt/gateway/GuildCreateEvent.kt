@@ -3,6 +3,7 @@ package com.github.princesslana.smalldkt.gateway
 import com.github.princesslana.smalldkt.GuildEvent
 import com.github.princesslana.smalldkt.permissions.PermissionBase
 import com.github.princesslana.smalldkt.permissions.Role
+import com.github.princesslana.smalldkt.type.Optional
 import com.github.princesslana.smalldkt.type.Snowflake
 import com.github.princesslana.smalldkt.type.TimeStamp
 import com.github.princesslana.smalldkt.type.channel.Channel
@@ -27,7 +28,7 @@ data class GuildCreateEvent(
     override val embed_enabled: Boolean? = null,
     override val embed_channel_id: Snowflake? = null,
     override val verification_level: VerificationLevel,
-    override val default_messages_notifications: DefaultMessageNotificationLevel,
+    override val default_messages_notifications: DefaultMessageNotificationLevel? = null,
     override val explicit_content_filter: ExplicitContentFilterLevel,
     override val roles: List<Role>,
     override val emojis: List<Emoji>,
@@ -37,8 +38,8 @@ data class GuildCreateEvent(
     override val widget_enabled: Boolean? = null,
     override val widget_channel_id: Snowflake? = null,
     override val system_channel_id: Snowflake?,
-    override val max_presences: Int?,
-    override val max_members: Int,
+    override val max_presences: Optional<Int>? = Optional.absent(),
+    override val max_members: Int? = null,
     override val vanity_url_code: String?,
     override val description: String?,
     override val banner: String?,

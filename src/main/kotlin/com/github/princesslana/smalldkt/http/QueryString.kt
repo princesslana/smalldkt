@@ -10,8 +10,8 @@ data class QueryString(val parts: List<Pair<String, String>>) {
 }
 
 class QueryStringBuilder(val list: MutableList<Pair<String, String>>) {
-    operator fun Pair<String, String>.unaryPlus() {
-        list.add(this)
+    operator fun Pair<String, Any>.unaryPlus() {
+        list.add(this.first to this.second.toString())
     }
 }
 

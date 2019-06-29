@@ -9,7 +9,6 @@ import com.github.princesslana.smalldkt.type.guild.PartialGuildMember
 import com.github.princesslana.smalldkt.type.user.PartialGuildUser
 import com.github.princesslana.smalldkt.type.user.User
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
 
 @Serializable
 data class MessageCreateEvent(
@@ -25,7 +24,7 @@ data class MessageCreateEvent(
     override val mention_everyone: Boolean,
     override val mentions: List<PartialGuildUser>,
     override val mention_roles: List<Snowflake>,
-    override val attachments: List<Attachment>,
+    override val attachments: List<MessageAttachment>,
     override val embeds: List<Embed>,
     override val reactions: List<Reaction>? = null,
     override val nonce: Optional<Snowflake>? = Optional.absent(),

@@ -10,5 +10,5 @@ data class GuildMemberUpdateEvent(
     override val guild_id: Snowflake,
     val roles: List<Snowflake>,
     val user: User,
-    val nick: String
+    val nick: String?
 ) : GuildEvent
