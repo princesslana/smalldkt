@@ -24,7 +24,7 @@ data class ChannelUpdateEvent(
     override val last_message_id: Optional<Snowflake>? = Optional.absent(),
     override val bitrate: Int? = null,
     override val user_limit: Int? = null,
-    override val rate_limit_per_use: Int? = null,
+    override val rate_limit_per_user: Int? = null,
     override val recipients: List<User>? = null,
     override val icon: Optional<String>? = Optional.absent(),
     override val owner_id: Snowflake? = null,
