@@ -4,7 +4,7 @@ import kotlinx.serialization.*
 import kotlinx.serialization.internal.StringDescriptor
 
 @Serializable
-class Snowflake(val id: Long) {
+data class Snowflake(val id: Long) {
     override fun toString(): String = "$id"
 
     @Serializer(forClass = Snowflake::class)

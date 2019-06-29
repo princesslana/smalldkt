@@ -4,8 +4,7 @@ package com.github.princesslana.smalldkt
 
 import com.github.princesslana.smalld.Config
 import com.github.princesslana.smalld.SmallD
-import com.github.princesslana.smalldkt.type.Event
-import com.github.princesslana.smalldkt.type.channel.events.*
+import com.github.princesslana.smalldkt.gateway.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -16,9 +15,8 @@ import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
 import kotlinx.serialization.json.JsonObject
-import java.lang.Exception
 
-val JSON = Json(JsonConfiguration(encodeDefaults = false, strictMode = false))
+val JSON = Json(JsonConfiguration.Stable.copy(encodeDefaults = false, strictMode = false))
 const val DEFAULT_CHANNEL_BUFFER = 25
 
 data class BotBuilder(
@@ -60,10 +58,28 @@ class Bot(config: Config, flowContracts: List<suspend (Flow<SmallDData<Event>>) 
                 val op = element.getPrimitive("op")
                 if (op.int == 0) {
                     val serializer: KSerializer<out Event> = when (val eventName = element.getPrimitive("t").content) {
+                        "HELLO" -> HelloEvent.serializer()
+                        "READY" -> ReadyEvent.serializer()
+                        "RESUMED" -> ResumedEvent.serializer()
+                        "INVALID_SESSION" -> InvalidSessionEvent.serializer()
                         "CHANNEL_CREATE" -> ChannelCreateEvent.serializer()
                         "CHANNEL_UPDATE" -> ChannelUpdateEvent.serializer()
                         "CHANNEL_DELETE" -> ChannelDeleteEvent.serializer()
                         "CHANNEL_PINS_UPDATE" -> ChannelPinsUpdateEvent.serializer()
+                        "GUILD_CREATE" -> GuildCreateEvent.serializer()
+                        "GUILD_UPDATE" -> GuildUpdateEvent.serializer()
+                        "GUILD_DELETE" -> GuildDeleteEvent.serializer()
+                        "GUILD_BAN_ADD" -> GuildBanAddEvent.serializer()
+                        "GUILD_BAN_REMOVE" -> GuildBanRemoveEvent.serializer()
+                        "GUILD_EMOJIS_UPDATE" -> GuildEmojisUpdateEvent.serializer()
+                        "GUILD_INTEGRATIONS_UPDATE" -> GuildIntegrationsUpdateEvent.serializer()
+                        "GUILD_MEMBER_ADD" -> GuildMemberAddEvent.serializer()
+                        "GUILD_MEMBER_REMOVE" -> GuildMemberRemoveEvent.serializer()
+                        "GUILD_MEMBER_UPDATE" -> GuildMemberUpdateEvent.serializer()
+                        "GUILD_MEMBERS_CHUNK" -> GuildMembersChunkEvent.serializer()
+                        "GUILD_ROLE_CREATE" -> GuildRoleCreateEvent.serializer()
+                        "GUILD_ROLE_UPDATE" -> GuildRoleUpdateEvent.serializer()
+                        "GUILD_ROLE_DELETE" -> GuildRoleDeleteEvent.serializer()
                         "MESSAGE_CREATE" -> MessageCreateEvent.serializer()
                         "MESSAGE_UPDATE" -> MessageUpdateEvent.serializer()
                         "MESSAGE_DELETE" -> MessageDeleteEvent.serializer()
@@ -71,6 +87,12 @@ class Bot(config: Config, flowContracts: List<suspend (Flow<SmallDData<Event>>) 
                         "MESSAGE_REACTION_ADD" -> MessageReactionAddEvent.serializer()
                         "MESSAGE_REACTION_REMOVE" -> MessageReactionRemoveEvent.serializer()
                         "MESSAGE_REACTION_REMOVE_ALL" -> MessageReactionRemoveAllEvent.serializer()
+                        "PRESENCE_UPDATE" -> PresenceUpdateEvent.serializer()
+                        "TYPING_START" -> TypingStartEvent.serializer()
+                        "USER_UPDATE" -> UserUpdateEvent.serializer()
+                        "VOICE_STATE_UPDATE" -> VoiceStateUpdateEvent.serializer()
+                        "VOICE_SERVER_UPDATE" -> VoiceServerUpdateEvent.serializer()
+                        "WEBHOOKS_UPDATE" -> WebhookUpdateEvent.serializer()
                         else -> {
                             println("Unhandled event name $eventName")
                             null
