@@ -18,7 +18,7 @@
         <kotlin.code.style>official</kotlin.code.style>
         <kotlin.kotlinx.serialization.version>0.11.0</kotlin.kotlinx.serialization.version>
         <kotlin.kotlinx.coroutines.version>1.2.1</kotlin.kotlinx.coroutines.version>
-        <junit.version>4.12</junit.version>
+        <junit.version>4.13.1</junit.version>
         <lib.smalld.version>0.2.0</lib.smalld.version>
     </properties>
 
